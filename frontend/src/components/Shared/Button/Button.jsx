@@ -13,8 +13,8 @@ const Button = ({ label, onClick, disabled, outline, small, icon: Icon }) => {
           cursor-pointer
           px-4
           w-full
-          ${outline ? 'bg-white' : 'bg-lime-500'}
-          ${outline ? 'border-black' : 'border-lime-500'}
+          ${outline ? 'bg-white' : 'bg-[#2B2D6B]'}
+          ${outline ? 'border-black' : 'border-[#2B2D6B]'}
           ${outline ? 'text-black' : 'text-white'}
           ${small ? 'text-sm' : 'text-md'}
           ${small ? 'py-1' : 'py-3'}

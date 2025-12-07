@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import useAuth from '../../../hooks/useAuth'
-import logo from '../../../assets/images/logo-flat.png'
+import logo from '../../../assets/images/logo.png'
 // Icons
 import { GrLogout } from 'react-icons/gr'
 import { FcSettings } from 'react-icons/fc'
