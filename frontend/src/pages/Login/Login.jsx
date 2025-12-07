@@ -4,6 +4,7 @@ import LoadingSpinner from '../../components/Shared/LoadingSpinner'
 import useAuth from '../../hooks/useAuth'
 import { FcGoogle } from 'react-icons/fc'
 import { TbFidgetSpinner } from 'react-icons/tb'
+import { useForm } from "react-hook-form";
 
 const Login = () => {
   const { signIn, signInWithGoogle, loading, user, setLoading } = useAuth()
@@ -12,27 +13,39 @@ const Login = () => {
 
   const from = location.state || '/'
 
+   const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+
   if (loading) return <LoadingSpinner />
   if (user) return <Navigate to={from} replace={true} />
 
-  // form submit handler
-  const handleSubmit = async event => {
-    event.preventDefault()
-    const form = event.target
-    const email = form.email.value
-    const password = form.password.value
+  const onSubmit = async data => {
+    const {email,password} = data
 
     try {
       //User Login
-      await signIn(email, password)
+      const { user } = await signIn(email, password);
 
-      navigate(from, { replace: true })
-      toast.success('Login Successful')
+      // await saveOrUpdateUser({
+      //   name: user?.displayName,
+      //   email: user?.email,
+      //   image: user?.photoURL,
+      // });
+
+      navigate(from, { replace: true });
+      toast.success("Login Successful");
     } catch (err) {
-      console.log(err)
-      toast.error(err?.message)
+      console.log(err);
+      toast.error(err?.message);
     }
+
   }
+
+  
 
   // Handle Google Signin
   const handleGoogleSignIn = async () => {
@@ -57,7 +70,7 @@ const Login = () => {
           </p>
         </div>
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           noValidate=''
           action=''
           className='space-y-6 ng-untouched ng-pristine ng-valid'
@@ -69,13 +82,22 @@ const Login = () => {
               </label>
               <input
                 type='email'
-                name='email'
                 id='email'
-                required
+                
                 placeholder='Enter Your Email Here'
-                className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-lime-500 bg-gray-200 text-gray-900'
+                className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-primary bg-gray-200 text-gray-900'
                 data-temp-mail-org='0'
+                  {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                    message: "Please enter a valid email Address",
+                  },
+                })}
               />
+               {errors.email && (
+                <p className="text-accent">{errors.email.message}</p>
+              )}
             </div>
             <div>
               <div className='flex justify-between'>
@@ -85,20 +107,30 @@ const Login = () => {
               </div>
               <input
                 type='password'
-                name='password'
                 autoComplete='current-password'
                 id='password'
-                required
                 placeholder='*******'
-                className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-lime-500 bg-gray-200 text-gray-900'
+                className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-primary bg-gray-200 text-gray-900'
+                 {...register("password", {
+                  required: "Password is required",
+                  pattern: {
+                    value:
+                      /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                    message:
+                      "Password must be at least 8 characters, include one uppercase letter, one number, and one special character",
+                  },
+                })}
               />
+               {errors.password && (
+                <p className="text-accent">{errors.password.message}</p>
+              )}
             </div>
           </div>
 
           <div>
             <button
               type='submit'
-              className='bg-lime-500 w-full rounded-md py-3 text-white'
+              className='bg-primary w-full rounded-md py-3 text-white'
             >
               {loading ? (
                 <TbFidgetSpinner className='animate-spin m-auto' />
@@ -109,7 +141,7 @@ const Login = () => {
           </div>
         </form>
         <div className='space-y-1'>
-          <button className='text-xs hover:underline hover:text-lime-500 text-gray-400 cursor-pointer'>
+          <button className='text-xs hover:underline hover:text-primary text-gray-400 cursor-pointer'>
             Forgot password?
           </button>
         </div>
@@ -133,7 +165,7 @@ const Login = () => {
           <Link
             state={from}
             to='/signup'
-            className='hover:underline hover:text-lime-500 text-gray-600'
+            className='hover:underline hover:text-primary text-gray-600'
           >
             Sign up
           </Link>
