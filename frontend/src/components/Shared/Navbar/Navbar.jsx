@@ -1,13 +1,22 @@
 import Container from "../Container";
 import { AiOutlineMenu } from "react-icons/ai";
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 import useAuth from "../../../hooks/useAuth";
 import avatarImg from "../../../assets/images/placeholder.jpg";
 import logo from "../../../assets/images/logo.png";
 const Navbar = () => {
   const { user, logOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+
+  const links = (
+    <>
+     
+      <NavLink to="/" className={({ isActive }) => isActive ? "text-blue-600 font-bold" : "text-black"}>Home</NavLink>
+      <NavLink to="/all-contests" className={({ isActive }) => isActive ? "text-blue-600 font-bold" : "text-black"}>All Contests</NavLink>
+      <NavLink to="/leaderboard" className={({ isActive }) => isActive ? "text-blue-600 font-bold" : "text-black"}>Leaderboard</NavLink>
+    </>
+  )
 
   return (
     <div className="fixed w-full bg-white z-10 shadow-sm">
@@ -19,15 +28,9 @@ const Navbar = () => {
               <img src={logo} alt="logo" width="100" height="100" />
             </Link>
 
-
-
             {/* add link */}
-            <Link to='/'>Home</Link>
-            <Link>All Contests</Link>
-            <Link>Leaderboard</Link>
 
-
-
+            {links}
 
             {/* Dropdown Menu */}
             <div className="relative">

@@ -1,10 +1,12 @@
 import Plants from '../../components/Home/Plants'
+import Banner from './banner/Banner'
 
 const Home = () => {
   return (
     <div>
-      <Plants />
+      {/* <Plants /> */}
       {/* More components */}
+      <Banner />
     </div>
   )
 }

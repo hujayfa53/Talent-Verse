@@ -1,5 +1,16 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 @plugin "daisyui";
 
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
 
-/* Primary: Deep Indigo — #2B2D6B Accent: Electric Coral — #FF5E6C Secondary: Aqua Mint — #2FD6C7 Neutral dark: Charcoal — #16161A Neutral light: Smoke — #F4F6F8 */
+  /* Brand Colors */
+  --color-primary: #2B2D6B;   /* Deep Indigo */
+  --color-accent:  #FF5E6C;   /* Electric Coral */
+  --color-secondary: #2FD6C7; /* Aqua Mint */
+
+  /* Neutrals */
+  --color-neutral: #16161A;        /* Charcoal (dark) */
+  --color-base-100: #F4F6F8;       /* Smoke (light) */
+}
