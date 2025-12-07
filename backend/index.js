@@ -53,6 +53,14 @@ const client = new MongoClient(process.env.MONGODB_URI, {
 })
 async function run() {
   try {
+
+
+const  db = client.db('talentVerseDB')
+const contestCollection = db.collection('contests')
+
+
+
+
     // Send a ping to confirm a successful connection
     await client.db('admin').command({ ping: 1 })
     console.log(
