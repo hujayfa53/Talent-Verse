@@ -51,6 +51,9 @@ const client = new MongoClient(process.env.MONGODB_URI, {
     deprecationErrors: true,
   },
 });
+
+// -------------------------------
+// -------------------------------
 async function run() {
   try {
     const db = client.db("talentVerseDB");
@@ -66,13 +69,13 @@ async function run() {
     })
 
 
+    // --get all contests from db
 
-
-    // --
     app.get('/contests', async (req,res) => {
       const result = await contestsCollection.find().toArray()
       res.send(result)
     })
+    
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
