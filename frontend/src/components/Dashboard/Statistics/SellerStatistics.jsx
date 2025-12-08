@@ -1,5 +1,5 @@
-const SellerStatistics = () => {
-  return <div>Seller Statistics Page</div>
-}
+const CreatorStatistics = () => {
+  return <div>Creator Statistics Page</div>;
+};
 
-export default SellerStatistics
+export default CreatorStatistics;

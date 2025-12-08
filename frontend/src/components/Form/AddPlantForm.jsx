@@ -1,11 +1,98 @@
 import { useState } from "react";
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css'
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { useForm, Controller } from "react-hook-form";
+import { imageUpload } from "../../utils";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useAuth from "../../hooks/useAuth";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import LoadingSpinner from '../Shared/LoadingSpinner'
+import ErrorPage from '../../pages/ErrorPage'
+
+
 const AddPlantForm = () => {
   const [startDate, setStartDate] = useState(new Date());
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
+
+  const {
+    isPending,
+    isError,
+    mutateAsync,
+    reset: mutationReset,
+  } = useMutation({
+    mutationFn: async (payload) => await axiosSecure.post(`/contests`, payload),
+    onSuccess: (data) => {
+      console.log(data);
+      toast.success("Contest Added Successfully");
+      mutationReset();
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+    onMutate: (payload) => {
+      console.log("I will post this data ", payload);
+    },
+    onSettled: (data, error) => {
+      console.log("i am from on setteld", data);
+      if (error) console.log(error);
+    },
+    retry: 3,
+  });
+
+  // React hook form
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+    reset,
+  } = useForm();
+
+  const onSubmit = async (data) => {
+    const {
+      name,
+      description,
+      fee,
+      category,
+      image,
+      participate,
+      instruction,
+      prize,
+      deadline,
+    } = data;
+    const imageFile = image[0];
+
+    try {
+      const imageUrl = await imageUpload(imageFile);
+      const contestData = {
+        image: imageUrl,
+        name,
+        description,
+        instruction,
+        category,
+        fee: Number(fee),
+        prize: Number(prize),
+        participate: Number(participate),
+        creator: {
+          image: user?.photoURl,
+          name: user?.displayName,
+          email: user?.email,
+        },
+      };
+      await mutateAsync(contestData);
+      reset() ;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  if(isPending) return <LoadingSpinner />
+  if(isError) return <ErrorPage />
   return (
     <div className="w-full min-h-[calc(100vh-40px)] flex flex-col justify-center items-center text-gray-800 rounded-xl bg-gray-50">
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           <div className="space-y-6">
             {/* Name */}
@@ -15,31 +102,46 @@ const AddPlantForm = () => {
               </label>
               <input
                 className="w-full px-4 py-3 text-gray-800 border border-secondary focus:outline-secondary rounded-md bg-white"
-                name="name"
                 id="name"
                 type="text"
                 placeholder="Contest Name"
-                required
+                {...register("name", { required: "Contest Name is required" })}
               />
+              {errors.name && (
+                <p className="text-accent">{errors.name.message}</p>
+              )}
             </div>
             {/* deadline */}
             <div className="space-y-1 text-sm">
-              <label htmlFor="contestDate" className="block text-gray-600">
-              Deadline
+              <label htmlFor="deadline" className="block text-gray-600">
+                Contest Deadline
               </label>
 
-              {/* DatePicker Component */}
-              <DatePicker
-                selected={startDate}
-                onChange={(date) => setStartDate(date)}
-                // Applying your existing input styles here
-                className="w-full px-4 py-3 text-gray-800 border border-secondary focus:outline-secondary rounded-md bg-white"
-                placeholderText="Select a date"
-                dateFormat="dd/MM/yyyy"
-                id="contestDate"
+              {/* 👇 Use Controller instead of register directly */}
+              <Controller
+                control={control} // Make sure you pass 'control' from useForm() here
+                name="deadline"
+                rules={{ required: "Deadline is required" }}
+                render={({ field }) => (
+                  <DatePicker
+                    className="w-full px-4 py-3 text-gray-800 border border-secondary focus:outline-secondary rounded-md bg-white"
+                    placeholderText="Select Deadline"
+                    // Link React Hook Form to DatePicker
+                    selected={field.value}
+                    onChange={(date) => {
+                      field.onChange(date); // Update Form State
+                      setStartDate(date); // Update Local State (for your helper text)
+                    }}
+                    dateFormat="dd.MM.yy"
+                    id="deadline"
+                  />
+                )}
               />
+
+              {errors.deadline && (
+                <p className="text-red-500">{errors.deadline.message}</p>
+              )}
             </div>
-           
 
             {/* Category */}
             <div className="space-y-1 text-sm">
@@ -50,7 +152,11 @@ const AddPlantForm = () => {
                 required
                 className="w-full px-4 py-3 border border-secondary focus:outline-secondary rounded-md bg-white"
                 name="category"
+                {...register("category", { required: "Category is required" })}
               >
+                {errors.category && (
+                  <p className="text-accent">{errors.category.message}</p>
+                )}
                 <option value="Coding">Coding</option>
                 <option value="Business Ideas">Business Ideas</option>
                 <option value="Photography">Photography</option>
@@ -58,6 +164,7 @@ const AddPlantForm = () => {
                 <option value="Design">Design</option>
               </select>
             </div>
+
             {/* Instruction */}
             <div className="space-y-1 text-sm">
               <label htmlFor="instruction" className="block text-gray-600">
@@ -69,7 +176,32 @@ const AddPlantForm = () => {
                 placeholder="Write contest Instruction here..."
                 className="block rounded-md focus:lime-300 w-full h-32 px-4 py-3 text-gray-800  border border-secondary bg-white focus:outline-secondary "
                 name="instruction"
+                {...register("instruction", {
+                  required: "Instruction is required",
+                })}
               ></textarea>
+              {errors.instruction && (
+                <p className="text-accent">{errors.instruction.message}</p>
+              )}
+            </div>
+
+            {/* description*/}
+            <div className="space-y-1 text-sm">
+              <label htmlFor="description" className="block text-gray-600">
+                Description
+              </label>
+
+              <textarea
+                id="description"
+                placeholder="Write contest description here..."
+                className="block rounded-md focus:lime-300 w-full h-32 px-4 py-3 text-gray-800  border border-secondary bg-white focus:outline-secondary "
+                {...register("description", {
+                  required: "Description is required",
+                })}
+              ></textarea>
+              {errors.description && (
+                <p className="text-accent">{errors.description.message}</p>
+              )}
             </div>
           </div>
           <div className="space-y-6 flex flex-col">
@@ -82,12 +214,17 @@ const AddPlantForm = () => {
                 </label>
                 <input
                   className="w-full px-4 py-3 text-gray-800 border border-secondary focus:outline-secondary rounded-md bg-white"
-                  name="entry fee"
                   id="fee"
                   type="number"
                   placeholder="Entry Fee"
-                  required
+                  {...register("fee", {
+                    required: "Fee is required",
+                    min: { value: 0, message: "Fee must be positive" },
+                  })}
                 />
+                {errors.fee && (
+                  <p className="text-accent">{errors.fee.message}</p>
+                )}
               </div>
 
               {/* Quantity */}
@@ -97,11 +234,30 @@ const AddPlantForm = () => {
                 </label>
                 <input
                   className="w-full px-4 py-3 text-gray-800 border border-secondary focus:outline-secondary rounded-md bg-white"
-                  name="prize"
                   id="prize"
                   type="number"
                   placeholder="Prize Money"
-                  required
+                  {...register("prize", {
+                    required: "Prize is required",
+                    min: { value: 0, message: "Prize must be positive" },
+                  })}
+                />
+                {errors.prize && (
+                  <p className="text-accent">{errors.prize.message}</p>
+                )}
+              </div>
+              {/* participate count */}
+              <div className="space-y-1 text-sm">
+                <label htmlFor="participate" className="block text-gray-600">
+                  Participant
+                </label>
+                <input
+                  className="w-full px-4 py-3 text-gray-800 border border-secondary focus:outline-secondary rounded-md bg-white"
+                  id="participate"
+                  type="number"
+                  placeholder="Participate"
+                  defaultValue={0}
+                  {...register("participate", {})}
                 />
               </div>
             </div>
@@ -118,6 +274,7 @@ const AddPlantForm = () => {
                       id="image"
                       accept="image/*"
                       hidden
+                      {...register("image", { required: "image is required" })}
                     />
                     <div className="bg-secondary text-white border border-gray-300 rounded font-semibold cursor-pointer p-1 px-3 hover:bg-primary">
                       Upload

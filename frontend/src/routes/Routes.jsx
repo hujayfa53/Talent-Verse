@@ -5,14 +5,14 @@ import SignUp from '../pages/SignUp/SignUp'
 import PlantDetails from '../pages/PlantDetails/PlantDetails'
 import PrivateRoute from './PrivateRoute'
 import DashboardLayout from '../layouts/DashboardLayout'
-import AddPlant from '../pages/Dashboard/Seller/AddPlant'
+import AddPlant from '../pages/Dashboard/Creator/AddPlant'
 import ManageUsers from '../pages/Dashboard/Admin/ManageUsers'
 import Profile from '../pages/Dashboard/Common/Profile'
 import Statistics from '../pages/Dashboard/Common/Statistics'
 import MainLayout from '../layouts/MainLayout'
-import MyInventory from '../pages/Dashboard/Seller/MyInventory'
-import ManageOrders from '../pages/Dashboard/Seller/ManageOrders'
-import MyOrders from '../pages/Dashboard/Customer/MyOrders'
+import MyInventory from '../pages/Dashboard/Creator/MyInventory'
+import ManageOrders from '../pages/Dashboard/Creator/ManageOrders'
+import MyParticipateContest from '../pages/Dashboard/user/MyParticipateContest'
 import { createBrowserRouter } from 'react-router'
 import AllContests from '../pages/AllContests/AllContests'
 
@@ -90,7 +90,7 @@ export const router = createBrowserRouter([
         path: 'my-orders',
         element: (
           <PrivateRoute>
-            <MyOrders />
+            <MyParticipateContest />
           </PrivateRoute>
         ),
       },
