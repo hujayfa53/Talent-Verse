@@ -15,7 +15,7 @@ const UserMenu = () => {
       <MenuItem
         icon={BsFingerprint}
         label="My Participated Contest"
-        address="My Participated Contest"
+        address="My-participate"
       />
 
       <div

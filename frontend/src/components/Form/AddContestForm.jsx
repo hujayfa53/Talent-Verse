@@ -7,15 +7,17 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import LoadingSpinner from '../Shared/LoadingSpinner'
-import ErrorPage from '../../pages/ErrorPage'
+import LoadingSpinner from "../Shared/LoadingSpinner";
+import ErrorPage from "../../pages/ErrorPage";
+import { TbFidgetSpinner } from "react-icons/tb";
 
-
-const AddPlantForm = () => {
+const AddContestForm = () => {
   const [startDate, setStartDate] = useState(new Date());
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
 
+
+// put , patch ,post , delete ....
   const {
     isPending,
     isError,
@@ -63,7 +65,7 @@ const AddPlantForm = () => {
       deadline,
     } = data;
     const imageFile = image[0];
-
+// send data
     try {
       const imageUrl = await imageUpload(imageFile);
       const contestData = {
@@ -75,21 +77,22 @@ const AddPlantForm = () => {
         fee: Number(fee),
         prize: Number(prize),
         participate: Number(participate),
+        deadline,
         creator: {
-          image: user?.photoURl,
+          image: user?.photoURL,
           name: user?.displayName,
           email: user?.email,
         },
       };
       await mutateAsync(contestData);
-      reset() ;
+      reset();
     } catch (error) {
       console.log(error);
     }
   };
 
-  if(isPending) return <LoadingSpinner />
-  if(isError) return <ErrorPage />
+  if (isPending) return <LoadingSpinner />;
+  if (isError) return <ErrorPage />;
   return (
     <div className="w-full min-h-[calc(100vh-40px)] flex flex-col justify-center items-center text-gray-800 rounded-xl bg-gray-50">
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -289,7 +292,11 @@ const AddPlantForm = () => {
               type="submit"
               className="w-full cursor-pointer p-3 mt-5 text-center font-medium text-white transition duration-200 rounded shadow-md bg-primary "
             >
-              Save & Continue
+              {isPending ? (
+                <TbFidgetSpinner className='animate-spin m-auto' />
+              ) : (
+                'Save & Continue'
+              )}
             </button>
           </div>
         </div>
@@ -298,4 +305,4 @@ const AddPlantForm = () => {
   );
 };
 
-export default AddPlantForm;
+export default AddContestForm;

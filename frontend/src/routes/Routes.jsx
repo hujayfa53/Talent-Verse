@@ -1,45 +1,45 @@
-import Home from '../pages/Home/Home'
-import ErrorPage from '../pages/ErrorPage'
-import Login from '../pages/Login/Login'
-import SignUp from '../pages/SignUp/SignUp'
-import PlantDetails from '../pages/PlantDetails/PlantDetails'
-import PrivateRoute from './PrivateRoute'
-import DashboardLayout from '../layouts/DashboardLayout'
-import AddPlant from '../pages/Dashboard/Creator/AddPlant'
-import ManageUsers from '../pages/Dashboard/Admin/ManageUsers'
-import Profile from '../pages/Dashboard/Common/Profile'
-import Statistics from '../pages/Dashboard/Common/Statistics'
-import MainLayout from '../layouts/MainLayout'
-import MyInventory from '../pages/Dashboard/Creator/MyInventory'
-import ManageOrders from '../pages/Dashboard/Creator/ManageOrders'
-import MyParticipateContest from '../pages/Dashboard/user/MyParticipateContest'
-import { createBrowserRouter } from 'react-router'
-import AllContests from '../pages/AllContests/AllContests'
+import Home from "../pages/Home/Home";
+import ErrorPage from "../pages/ErrorPage";
+import Login from "../pages/Login/Login";
+import SignUp from "../pages/SignUp/SignUp";
+import PlantDetails from "../pages/PlantDetails/PlantDetails";
+import PrivateRoute from "./PrivateRoute";
+import DashboardLayout from "../layouts/DashboardLayout";
+import AddContest from "../pages/Dashboard/Creator/AddContest";
+import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
+import Profile from "../pages/Dashboard/Common/Profile";
+import Statistics from "../pages/Dashboard/Common/Statistics";
+import MainLayout from "../layouts/MainLayout";
+import MyInventory from "../pages/Dashboard/Creator/MyInventory";
+import ManageOrders from "../pages/Dashboard/Creator/ManageOrders";
+import MyParticipateContest from "../pages/Dashboard/user/MyParticipateContest";
+import { createBrowserRouter } from "react-router";
+import AllContests from "../pages/AllContests/AllContests";
 
 export const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <MainLayout />,
     errorElement: <ErrorPage />,
     children: [
       {
-        path: '/',
+        path: "/",
         element: <Home />,
       },
       {
-        path: '/all-contests',
+        path: "/all-contests",
         element: <AllContests />,
       },
       {
-        path: '/plant/:id',
+        path: "/plant/:id",
         element: <PlantDetails />,
       },
     ],
   },
-  { path: '/login', element: <Login /> },
-  { path: '/signup', element: <SignUp /> },
+  { path: "/login", element: <Login /> },
+  { path: "/signup", element: <SignUp /> },
   {
-    path: '/dashboard',
+    path: "/dashboard",
     element: (
       <PrivateRoute>
         <DashboardLayout />
@@ -55,15 +55,15 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'add-plant',
+        path: "add-plant",
         element: (
           <PrivateRoute>
-            <AddPlant />
+            <AddContest />
           </PrivateRoute>
         ),
       },
       {
-        path: 'my-inventory',
+        path: "my-inventory",
         element: (
           <PrivateRoute>
             <MyInventory />
@@ -71,7 +71,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'manage-users',
+        path: "manage-users",
         element: (
           <PrivateRoute>
             <ManageUsers />
@@ -79,7 +79,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'profile',
+        path: "profile",
         element: (
           <PrivateRoute>
             <Profile />
@@ -87,7 +87,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'my-orders',
+        path: "my-participate",
         element: (
           <PrivateRoute>
             <MyParticipateContest />
@@ -95,9 +95,9 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'manage-orders',
+        path: "manage-orders",
         element: <ManageOrders />,
       },
     ],
   },
-])
+]);
