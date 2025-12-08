@@ -47,7 +47,7 @@ const Card = ({ contest }) => {
             ? description.slice(0, 50) + "..."
             : description}
         </div>
-        <Link to={`/plant/1`} className="btn btn-primary">Show Details</Link>
+        <Link to={`/plant/${_id}`} className="btn btn-primary">Show Details</Link>
       </div>
     </div>
   );
