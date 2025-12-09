@@ -1,62 +1,87 @@
-import CustomerOrderDataRow from '../../../components/Dashboard/TableRows/UserOrderDataRow'
+import CustomerOrderDataRow from "../../../components/Dashboard/TableRows/UserOrderDataRow";
+import useAuth from "../../../hooks/useAuth";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
+import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
+import UserOrderDataRow from "../../../components/Dashboard/TableRows/UserOrderDataRow";
 
 const MyParticipateContest = () => {
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
+
+  const { data: contests = [], isLoading } = useQuery({
+    queryKey: ["contests", user?.email],
+    queryFn: async () => {
+      const result = await axiosSecure(`/my-participate`);
+      return result.data;
+    },
+  });
+  console.log(contests);
+  const sortedContests = contests.sort((a, b) => {
+  const dateA = new Date(a.deadline);
+  const dateB = new Date(b.deadline);
+  return dateA - dateB; // ascending
+});
+
+  if (isLoading) return <LoadingSpinner />;
   return (
     <>
-      <div className='container mx-auto px-4 sm:px-8'>
-        <div className='py-8'>
-          <div className='-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto'>
-            <div className='inline-block min-w-full shadow rounded-lg overflow-hidden'>
-              <table className='min-w-full leading-normal'>
+      <div className="container mx-auto px-4 sm:px-8">
+        <div className="py-8">
+          <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+            <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
+              <table className="min-w-full leading-normal">
                 <thead>
                   <tr>
                     <th
-                      scope='col'
-                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
+                      scope="col"
+                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
                     >
                       Image
                     </th>
                     <th
-                      scope='col'
-                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
+                      scope="col"
+                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
                     >
                       Name
                     </th>
                     <th
-                      scope='col'
-                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
+                      scope="col"
+                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
                     >
                       Category
                     </th>
-                    <th
-                      scope='col'
-                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
+                    {/* <th
+                      scope="col"
+                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
                     >
                       Price
-                    </th>
+                    </th> */}
                     <th
-                      scope='col'
-                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
+                      scope="col"
+                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
                     >
-                      Quantity
+                      Deadline
                     </th>
                     <th
-                      scope='col'
-                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
+                      scope="col"
+                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
                     >
                       Status
                     </th>
 
-                    <th
-                      scope='col'
-                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
+                    {/* <th
+                      scope="col"
+                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
                     >
                       Action
-                    </th>
+                    </th> */}
                   </tr>
                 </thead>
                 <tbody>
-                  <CustomerOrderDataRow />
+                  {contests.map((contest) => (
+                    <UserOrderDataRow key={contest._id} contest={contest}/>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -64,7 +89,7 @@ const MyParticipateContest = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default MyParticipateContest
+export default MyParticipateContest;
