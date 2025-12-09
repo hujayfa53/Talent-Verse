@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const admin = require("firebase-admin");
 const port = process.env.PORT || 3000;
@@ -16,11 +17,7 @@ const app = express();
 // middleware
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "https://b12-m11-session.web.app",
-    ],
+    origin: [process.env.CLIENT_DOMAIN],
     credentials: true,
     optionSuccessStatus: 200,
   })
@@ -58,33 +55,101 @@ async function run() {
   try {
     const db = client.db("talentVerseDB");
     const contestsCollection = db.collection("contests");
-
-
+    const registerCollection = db.collection("register");
 
     // save contests in db
-    app.post('/contests', async (req,res) => {
-      const contestData = req.body
-      const result = await contestsCollection.insertOne(contestData)
-      res.send(result)
-    })
-
+    app.post("/contests", async (req, res) => {
+      const contestData = req.body;
+      const result = await contestsCollection.insertOne(contestData);
+      res.send(result);
+    });
 
     // --get all contests from db
 
-    app.get('/contests', async (req,res) => {
-      const result = await contestsCollection.find().toArray()
-      res.send(result)
-    })
+    app.get("/contests", async (req, res) => {
+      const result = await contestsCollection.find().toArray();
+      res.send(result);
+    });
 
+    // ---get single contest fro
 
-    // ---get single contest from db
+    app.get("/contests/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await contestsCollection.findOne({
+        _id: new ObjectId(id),
+      });
+      res.send(result);
+    });
 
-    app.get('/contests/:id', async (req,res) => {
-      const id =req.params.id
-      const result = await contestsCollection.findOne({_id: new ObjectId(id)})
-      res.send(result)
-    })
-    
+    // payments end point
+    app.post("/create-checkout-session", async (req, res) => {
+      const paymentInfo = req.body;
+      console.log(paymentInfo);
+      const session = await stripe.checkout.sessions.create({
+        line_items: [
+          {
+            price_data: {
+              currency: "usd",
+              product_data: {
+                name: paymentInfo?.name,
+                description: paymentInfo?.description,
+                images: [paymentInfo?.image],
+              },
+              unit_amount: paymentInfo?.fee * 100,
+            },
+            quantity: 1,
+          },
+        ],
+        customer_email: paymentInfo?.customer?.email,
+        mode: "payment",
+        metadata: {
+          contestId: paymentInfo?.contestId,
+          customer: paymentInfo?.customer.email,
+        },
+        success_url: `${process.env.CLIENT_DOMAIN}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.CLIENT_DOMAIN}/plant/${paymentInfo?.contestId}`,
+      });
+      console.log(session);
+      res.send({ url: session.url });
+    });
+
+    app.post("/payment-success", async (req, res) => {
+      const { sessionId } = req.body;
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+      const contest = await contestsCollection.findOne({
+        _id: new ObjectId(session.metadata.contestId),
+      });
+      const register = await registerCollection.findOne({
+        transactionId: session.payment_intent,
+      });
+
+      if (session.status === "complete" && contest && !register) {
+        // save data in db
+        const registerInfo = {
+          contestId: session.metadata.contestId,
+          deadline: new Date(contest.deadline).toISOString(),
+          transactionId:session.payment_intent,
+          customer:session.metadata.customer,
+          status: 'paid',
+          creator: contest.creator,
+          name:contest.name,
+          category:contest.category,
+          image:contest?.image,
+      }
+      const result = await registerCollection.insertOne(registerInfo)
+      // update participate
+      await contestsCollection.updateOne({
+        _id:new ObjectId(session.metadata.contestId)
+      },
+    {$inc: {participate: +1}})
+
+    return res.send(res.send({
+      transactionId:session.payment_intent,
+      registerId: register._id
+    }))
+
+    }});
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
