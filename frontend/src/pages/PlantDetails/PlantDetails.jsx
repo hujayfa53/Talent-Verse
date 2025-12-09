@@ -7,16 +7,20 @@ import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import LoadingSpinner from "../../components/Shared/LoadingSpinner";
-
+import SubmitModal from "./SubmitModal";
+import useAuth from "../../hooks/useAuth";
 
 const PlantDetails = () => {
+  const { user } = useAuth();
   let [isOpen, setIsOpen] = useState(false);
-  const [isExpired,setIsExpired] = useState(false)
+  const [isSubmitOpen, setIsSubmitOpen] = useState(false);
+  const [isExpired, setIsExpired] = useState(false);
   const { id } = useParams();
   const [timeLeft, setTimeLeft] = useState("");
 
+  // ---------
   const { data: contest = {}, isLoading } = useQuery({
-    queryKey: ["contest",id],
+    queryKey: ["contest", id],
     queryFn: async () => {
       const result = await axios(
         `${import.meta.env.VITE_API_URL}/contests/${id}`
@@ -25,8 +29,18 @@ const PlantDetails = () => {
     },
   });
 
+  // ----------
+  const { data: isPurchased = false, isLoading: isPurchaseLoading } = useQuery({
+    queryKey: ["isPurchased", id, user?.email],
+    queryFn: async () => {
+      const result = await axios.get(`${import.meta.env.VITE_API_URL}/purchase-check/${id}/${user?.email}`);
+      return result.data.purchased
+    },
+  });
+
   const closeModal = () => {
     setIsOpen(false);
+    setIsSubmitOpen(false)
   };
 
   const {
@@ -42,17 +56,16 @@ const PlantDetails = () => {
     deadline,
   } = contest;
 
-
   // formate data
   const formateDeadline = (dateString) => {
-    if(!dateString) return <LoadingSpinner />
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US',{
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
-  }
+    if (!dateString) return <LoadingSpinner />;
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
   // live countdown
 
@@ -64,7 +77,7 @@ const PlantDetails = () => {
       const distance = end - now;
       if (distance < 0) {
         setTimeLeft("Contest Expired");
-        setIsExpired(true)
+        setIsExpired(true);
         clearInterval(interval);
         return;
       }
@@ -80,7 +93,6 @@ const PlantDetails = () => {
     }, 1000);
     return () => clearInterval(interval);
   }, [deadline]);
-
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -172,18 +184,53 @@ const PlantDetails = () => {
               Deadline: {formateDeadline(deadline)}
             </p>
           </div>
-          <hr className="my-6" />
-          <div className="flex justify-between">
-            <p className="font-bold text-3xl text-gray-800">Prize: {prize}$</p>
-            <p className="font-bold text-3xl text-gray-800">Fee: {fee}$</p>
-            <div>
-              <Button onClick={() => setIsOpen(true)} label="Register" disabled={isExpired}/>
-            </div>
-          </div>
+
+
           <hr className="my-6" />
 
-          <PurchaseModal contest={contest} closeModal={closeModal} isOpen={isOpen} />
+        {/* Prize and Action Buttons */}
+          <div className="flex flex-col gap-4">
+             <div className="flex justify-between items-center">
+                <p className="font-bold text-3xl text-gray-800">Prize: {prize}$</p>
+                <p className="font-bold text-3xl text-gray-800">Fee: {fee}$</p>
+             </div>
+
+             {/* Dynamic Button Rendering */}
+             <div className="w-full mt-4">
+                {isExpired ? (
+                   <Button label="Deadline Passed" disabled={true} />
+                ) : isPurchased ? (
+                   <Button 
+                      onClick={() => setIsSubmitOpen(true)} 
+                      label="Submit Task" 
+                      // You might want to disable if they already submitted
+                   />
+                ) : (
+                   <Button 
+                      onClick={() => setIsOpen(true)} 
+                      label="Register" 
+                   />
+                )}
+             </div>
+          </div>
+
+          {/* <hr className="my-6" /> */}
+
+         {/* Registration Modal */}
+          <PurchaseModal
+            contest={contest}
+            closeModal={closeModal}
+            isOpen={isOpen}
+          />
+          
+          {/* Task Submission Modal */}
+          <SubmitModal 
+            isSubmitOpen={isSubmitOpen} 
+            closeModal={closeModal} 
+            contest={contest}
+          />
         </div>
+        {/* <SubmitModal /> */}
       </div>
     </Container>
   );

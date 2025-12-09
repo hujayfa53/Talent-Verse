@@ -2,6 +2,8 @@ import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 import { data } from "react-router";
+
+
 const PurchaseModal = ({ closeModal, isOpen, contest }) => {
   const { user } = useAuth();
   // Total Price Calculation
