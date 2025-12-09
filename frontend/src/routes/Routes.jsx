@@ -15,6 +15,7 @@ import ManageOrders from "../pages/Dashboard/Creator/ManageOrders";
 import MyParticipateContest from "../pages/Dashboard/user/MyParticipateContest";
 import { createBrowserRouter } from "react-router";
 import AllContests from "../pages/AllContests/AllContests";
+import PaymentSuccess from "../pages/Payment/Paymentsuccess";
 
 export const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ export const router = createBrowserRouter([
       {
         path: "/plant/:id",
         element: <PlantDetails />,
+      },
+      {
+        path: "/payment-success",
+        element: <PaymentSuccess />,
       },
     ],
   },

@@ -11,11 +11,12 @@ import LoadingSpinner from "../../components/Shared/LoadingSpinner";
 
 const PlantDetails = () => {
   let [isOpen, setIsOpen] = useState(false);
+  const [isExpired,setIsExpired] = useState(false)
   const { id } = useParams();
   const [timeLeft, setTimeLeft] = useState("");
 
   const { data: contest = {}, isLoading } = useQuery({
-    queryKey: ["contest"],
+    queryKey: ["contest",id],
     queryFn: async () => {
       const result = await axios(
         `${import.meta.env.VITE_API_URL}/contests/${id}`
@@ -59,10 +60,11 @@ const PlantDetails = () => {
     if (!deadline) return;
     const interval = setInterval(() => {
       const now = new Date().getTime();
-      const distance = new Date(deadline).getTime() - now;
-
+      const end = new Date(deadline).getTime();
+      const distance = end - now;
       if (distance < 0) {
         setTimeLeft("Contest Expired");
+        setIsExpired(true)
         clearInterval(interval);
         return;
       }
@@ -175,12 +177,12 @@ const PlantDetails = () => {
             <p className="font-bold text-3xl text-gray-800">Prize: {prize}$</p>
             <p className="font-bold text-3xl text-gray-800">Fee: {fee}$</p>
             <div>
-              <Button onClick={() => setIsOpen(true)} label="Purchase" />
+              <Button onClick={() => setIsOpen(true)} label="Register" disabled={isExpired}/>
             </div>
           </div>
           <hr className="my-6" />
 
-          <PurchaseModal closeModal={closeModal} isOpen={isOpen} />
+          <PurchaseModal contest={contest} closeModal={closeModal} isOpen={isOpen} />
         </div>
       </div>
     </Container>
