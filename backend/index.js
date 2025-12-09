@@ -56,6 +56,7 @@ async function run() {
     const db = client.db("talentVerseDB");
     const contestsCollection = db.collection("contests");
     const registerCollection = db.collection("register");
+    const submissionCollection = db.collection("submissions");
 
     // save contests in db
     app.post("/contests", async (req, res) => {
@@ -129,27 +130,107 @@ async function run() {
         const registerInfo = {
           contestId: session.metadata.contestId,
           deadline: new Date(contest.deadline).toISOString(),
-          transactionId:session.payment_intent,
-          customer:session.metadata.customer,
-          status: 'paid',
+          transactionId: session.payment_intent,
+          customer: session.metadata.customer,
+          status: "paid",
           creator: contest.creator,
-          name:contest.name,
-          category:contest.category,
-          image:contest?.image,
+          name: contest.name,
+          category: contest.category,
+          image: contest?.image,
+        };
+        const result = await registerCollection.insertOne(registerInfo);
+        // update participate
+        await contestsCollection.updateOne(
+          {
+            _id: new ObjectId(session.metadata.contestId),
+          },
+          { $inc: { participate: +1 } }
+        );
+
+        return res.send({
+          transactionId: session.payment_intent,
+          registerId: register._id,
+        });
       }
-      const result = await registerCollection.insertOne(registerInfo)
-      // update participate
-      await contestsCollection.updateOne({
-        _id:new ObjectId(session.metadata.contestId)
-      },
-    {$inc: {participate: +1}})
+    });
 
-    return res.send(res.send({
-      transactionId:session.payment_intent,
-      registerId: register._id
-    }))
+    // --purchase check
+    app.get("/purchase-check/:contestId/:email", async (req, res) => {
+      const contestId = req.params.contestId;
+      const email = req.params.email;
 
-    }});
+      const query = {
+        contestId: contestId,
+        customer: email,
+      };
+      const result = await registerCollection.findOne(query);
+
+      res.send({ purchased: !!result });
+    });
+
+    // --------save user submission
+    app.post("/submissions", async (req, res) => {
+      const submissionData = req.body;
+
+      const query = {
+        contestId: submissionData.contestId,
+        participantEmail: submissionData.participantEmail,
+      };
+
+      const existingSubmission = await submissionCollection.findOne(query);
+
+      if (existingSubmission) {
+        return res
+          .status(400)
+          .send({ message: "You have already submitted for this contest." });
+      }
+
+      // save new submission
+
+      const result = await submissionCollection.insertOne(submissionData);
+      res.send(result);
+    });
+
+    // get all submission
+
+    app.get("/submissions/contest/:contestId", async (req, res) => {
+      const contestId = req.params.contestId;
+      const query = { contestId: contestId };
+      const result = await submissionCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    // declare a winner
+    app.patch("/contests/winner", async (req, res) => {
+      const { submissionId, contestId, winnerName, winnerEmail, winnerImage } =
+        req.body;
+
+      // update the submissions status to winner
+      const submissionFilter = { _id: new ObjectId(submissionId) };
+      const submissionUpdate = { $set: { status: "winner" } };
+
+      const submissionResult = await submissionCollection.updateOne(
+        submissionFilter,
+        submissionUpdate
+      );
+
+      // update the contest to store the winner info and mark as closed
+
+      const contestFilter = { _id: new ObjectId(contestId) };
+      const contestUpdate = {
+        $set: {
+          winnerName: winnerName,
+          winnerEmail: winnerEmail,
+          winnerImage: winnerImage,
+          status: "closed",
+        },
+      };
+      const contestResult = await contestsCollection.updateOne(
+        contestFilter,
+        contestUpdate
+      );
+      res.send({ submissionResult, contestResult });
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
