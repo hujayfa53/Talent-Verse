@@ -78,6 +78,7 @@ const AddContestForm = () => {
         prize: Number(prize),
         participate: Number(participate),
         deadline,
+        status:'pending',
         creator: {
           image: user?.photoURL,
           name: user?.displayName,
@@ -120,7 +121,7 @@ const AddContestForm = () => {
                 Contest Deadline
               </label>
 
-              {/* 👇 Use Controller instead of register directly */}
+              {/*  Use Controller instead of register directly */}
               <Controller
                 control={control} // Make sure you pass 'control' from useForm() here
                 name="deadline"

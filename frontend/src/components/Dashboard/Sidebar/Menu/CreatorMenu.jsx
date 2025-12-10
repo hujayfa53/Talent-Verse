@@ -13,11 +13,7 @@ const CreatorMenu = () => {
 
      
 
-      <MenuItem
-        icon={MdOutlineManageHistory}
-        label="Manage Orders"
-        address="manage-orders"
-      />
+      
     </>
   );
 };

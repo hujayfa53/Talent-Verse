@@ -11,12 +11,13 @@ import Profile from "../pages/Dashboard/Common/Profile";
 import Statistics from "../pages/Dashboard/Common/Statistics";
 import MainLayout from "../layouts/MainLayout";
 import MyCreatedContests from "../pages/Dashboard/Creator/MyCreatedContests";
-import ManageOrders from "../pages/Dashboard/Creator/ManageOrders";
+import ManageContests from "../pages/Dashboard/Creator/ManageContests";
 import MyParticipateContest from "../pages/Dashboard/user/MyParticipateContest";
 import { createBrowserRouter } from "react-router";
 import AllContests from "../pages/AllContests/AllContests";
 import PaymentSuccess from "../pages/Payment/PaymentSuccess";
 import Submissions from "../pages/Dashboard/Creator/Submissions";
+import SubmissionDetails from "../pages/Dashboard/Creator/SubmissionDetails";
 
 export const router = createBrowserRouter([
   {
@@ -85,6 +86,14 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: "single-submissions/:id",
+        element: (
+          <PrivateRoute>
+            <SubmissionDetails />
+          </PrivateRoute>
+        ),
+      },
+      {
         path: "manage-users",
         element: (
           <PrivateRoute>
@@ -109,8 +118,8 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "manage-orders",
-        element: <ManageOrders />,
+        path: "manage-contests",
+        element: <ManageContests />,
       },
     ],
   },

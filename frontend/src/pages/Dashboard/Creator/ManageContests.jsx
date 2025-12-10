@@ -1,6 +1,25 @@
+import { useQuery } from "@tanstack/react-query";
 import CreatorOrderDataRow from "../../../components/Dashboard/TableRows/CreatorOrderDataRow";
+import axios from "axios";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
+import AdminContestsRow from "../../../components/Dashboard/TableRows/AdminContestsRow";
 
-const ManageOrders = () => {
+const ManageContests = () => {
+  const axiosSecure = useAxiosSecure();
+  const {
+    data: contests = [],
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["manage-contests"],
+    queryFn: async () => {
+      const result = await axiosSecure(`manage-contests`);
+      return result.data;
+    },
+  });
+
+  if (isLoading) return <LoadingSpinner />;
   return (
     <>
       <div className="container mx-auto px-4 sm:px-8">
@@ -20,32 +39,32 @@ const ManageOrders = () => {
                       scope="col"
                       className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
                     >
-                      Customer
+                      User
                     </th>
                     <th
                       scope="col"
                       className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
                     >
-                      Price
+                      Fee
                     </th>
                     <th
                       scope="col"
                       className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
                     >
-                      Quantity
+                      Prize
                     </th>
                     <th
                       scope="col"
                       className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
                     >
-                      Address
+                      Deadline
                     </th>
-                    <th
+                    {/* <th
                       scope="col"
                       className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
                     >
                       Status
-                    </th>
+                    </th> */}
 
                     <th
                       scope="col"
@@ -56,7 +75,9 @@ const ManageOrders = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <CreatorOrderDataRow />
+                  {contests.map((contest) => (
+                    <AdminContestsRow key={contest._id} contest={contest} refetch={refetch}/>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -67,4 +88,4 @@ const ManageOrders = () => {
   );
 };
 
-export default ManageOrders;
+export default ManageContests;

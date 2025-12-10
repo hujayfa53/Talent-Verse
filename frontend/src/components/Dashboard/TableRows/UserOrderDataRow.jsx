@@ -3,6 +3,8 @@ import DeleteModal from '../../Modal/DeleteModal'
 const UserOrderDataRow = ({contest}) => {
   let [isOpen, setIsOpen] = useState(false)
   const closeModal = () => setIsOpen(false)
+
+  
 console.log(contest)
   const {name,status,deadline,image,category} = contest || {}
 const formatDate = (iso) => {
