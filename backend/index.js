@@ -124,6 +124,7 @@ async function run() {
       const register = await registerCollection.findOne({
         transactionId: session.payment_intent,
       });
+      console.log(register)
 
       if (session.status === "complete" && contest && !register) {
         // save data in db
@@ -149,9 +150,15 @@ async function run() {
 
         return res.send({
           transactionId: session.payment_intent,
-          registerId: register._id,
+          registerId: result.insertedId,
         });
       }
+       res.send(
+        res.send({
+          transactionId: session.payment_intent,
+          registerId: register._id,
+        })
+      )
     });
 
     // --purchase check
@@ -200,6 +207,15 @@ async function run() {
       res.send(result);
     });
 
+    // get single submission
+    app.get("/submissions/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await submissionCollection.findOne({
+        _id: new ObjectId(id),
+      });
+      res.send(result);
+    });
+
     // declare a winner
     app.patch("/contests/winner", async (req, res) => {
       const { submissionId, contestId, winnerName, winnerEmail, winnerImage } =
@@ -232,22 +248,38 @@ async function run() {
       res.send({ submissionResult, contestResult });
     });
 
-
     // get all participate contest for a user
 
-    app.get('/my-participate', async (req,res) => {
-      const result = await registerCollection.find({customer:req.tokenEmail}).toArray()
-      res.send(result)
-    })
+    app.get("/my-participate",verifyJWT, async (req, res) => {
+      const result = await registerCollection
+        .find({ customer: req.tokenEmail })
+        .toArray();
+      res.send(result);
+    });
 
     // get all contests for a creator made
-    app.get('/my-created-contests/:email', verifyJWT, async (req,res) => {
-      const email = req.params.email
-      const result = await contestsCollection.find({'creator.email':email}).toArray()
+    app.get("/my-created-contests/:email", verifyJWT, async (req, res) => {
+      const email = req.params.email;
+      const result = await contestsCollection
+        .find({ "creator.email": email })
+        .toArray();
+      res.send(result);
+    });
+
+
+    // get all contest for admin
+    app.get('/manage-contests', async (req,res) => {
+      const result = await contestsCollection.find().toArray()
       res.send(result)
     })
 
 
+    app.delete('/contests/:id', async (req,res) => {
+      const id = req.params.id
+      const query = {_id: new ObjectId(id)}
+      const result = await contestsCollection.deleteOne(query)
+      res.send(result)
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
