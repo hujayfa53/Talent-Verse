@@ -6,10 +6,11 @@ const CreatorMenu = () => {
     <>
       <MenuItem
         icon={BsFillHouseAddFill}
-        label="Add Plant"
-        address="add-plant"
+        label="Add Contests"
+        address="add-contests"
       />
-      <MenuItem icon={MdHomeWork} label="My Inventory" address="my-inventory" />
+      <MenuItem icon={MdHomeWork} label="My Created Contests" address="my-created-contests" />
+
       <MenuItem
         icon={MdOutlineManageHistory}
         label="Manage Orders"

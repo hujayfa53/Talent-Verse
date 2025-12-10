@@ -2,16 +2,17 @@ import { useState } from 'react'
 import DeleteModal from '../../Modal/DeleteModal'
 import UpdatePlantModal from '../../Modal/UpdatePlantModal'
 
-const PlantDataRow = () => {
+const PlantDataRow = ({contest}) => {
   let [isOpen, setIsOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-
+console.log(contest)
   function openModal() {
     setIsOpen(true)
   }
   function closeModal() {
     setIsOpen(false)
   }
+  const {image,name,status,category} = contest
 
   return (
     <tr>
@@ -21,7 +22,7 @@ const PlantDataRow = () => {
             <div className='block relative'>
               <img
                 alt='profile'
-                src='https://i.ibb.co.com/rMHmQP2/money-plant-in-feng-shui-brings-luck.jpg'
+                src={image}
                 className='mx-auto object-cover rounded h-10 w-15 '
               />
             </div>
@@ -29,17 +30,17 @@ const PlantDataRow = () => {
         </div>
       </td>
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>Money Plant</p>
+        <p className='text-gray-900 '>{name}</p>
       </td>
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>Indoor</p>
+        <p className='text-gray-900 '>{category}</p>
       </td>
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>$120</p>
+        <p className='text-gray-900 '>{status}</p>
       </td>
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
+      {/* <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
         <p className='text-gray-900 '>5</p>
-      </td>
+      </td> */}
 
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
         <span
@@ -63,7 +64,7 @@ const PlantDataRow = () => {
             aria-hidden='true'
             className='absolute inset-0 bg-green-200 opacity-50 rounded-full'
           ></span>
-          <span className='relative'>Update</span>
+          <span className='relative'>Edit</span>
         </span>
         <UpdatePlantModal
           isOpen={isEditModalOpen}

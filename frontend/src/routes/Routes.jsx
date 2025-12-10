@@ -10,12 +10,12 @@ import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
 import Profile from "../pages/Dashboard/Common/Profile";
 import Statistics from "../pages/Dashboard/Common/Statistics";
 import MainLayout from "../layouts/MainLayout";
-import MyInventory from "../pages/Dashboard/Creator/MyInventory";
+import MyCreatedContests from "../pages/Dashboard/Creator/MyCreatedContests";
 import ManageOrders from "../pages/Dashboard/Creator/ManageOrders";
 import MyParticipateContest from "../pages/Dashboard/user/MyParticipateContest";
 import { createBrowserRouter } from "react-router";
 import AllContests from "../pages/AllContests/AllContests";
-import PaymentSuccess from "../pages/Payment/Paymentsuccess";
+import PaymentSuccess from "../pages/Payment/PaymentSuccess";
 
 export const router = createBrowserRouter([
   {
@@ -60,7 +60,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "add-plant",
+        path: "add-contests",
         element: (
           <PrivateRoute>
             <AddContest />
@@ -68,10 +68,10 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "my-inventory",
+        path: "my-created-contests",
         element: (
           <PrivateRoute>
-            <MyInventory />
+            <MyCreatedContests />
           </PrivateRoute>
         ),
       },

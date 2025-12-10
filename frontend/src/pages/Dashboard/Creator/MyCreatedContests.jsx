@@ -1,29 +1,20 @@
-import CustomerOrderDataRow from "../../../components/Dashboard/TableRows/UserOrderDataRow";
+import { useQuery } from "@tanstack/react-query";
+import PlantDataRow from "../../../components/Dashboard/TableRows/PlantDataRow";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
-import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
-import UserOrderDataRow from "../../../components/Dashboard/TableRows/UserOrderDataRow";
 
-const MyParticipateContest = () => {
+const MyCreatedContests = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
 
   const { data: contests = [], isLoading } = useQuery({
-    queryKey: ["contests", user?.email],
+    queryKey: ["createdContests", user?.email],
     queryFn: async () => {
-      const result = await axiosSecure(`/my-participate`);
+      const result = await axiosSecure(`/my-created-contests/${user?.email}`);
       return result.data;
     },
   });
-  console.log(contests);
-  
-  const sortedContests = contests.sort((a, b) => {
-    const dateA = new Date(a.deadline);
-    const dateB = new Date(b.deadline);
-    return dateA - dateB; // ascending
-  });
-
   if (isLoading) return <LoadingSpinner />;
   return (
     <>
@@ -52,36 +43,36 @@ const MyParticipateContest = () => {
                     >
                       Category
                     </th>
-                    {/* <th
-                      scope="col"
-                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
-                    >
-                      Price
-                    </th> */}
-                    <th
-                      scope="col"
-                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
-                    >
-                      Deadline
-                    </th>
                     <th
                       scope="col"
                       className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
                     >
                       Status
                     </th>
-
                     {/* <th
                       scope="col"
                       className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
                     >
-                      Action
+                      Quantity
                     </th> */}
+
+                    <th
+                      scope="col"
+                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
+                    >
+                      Delete
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
+                    >
+                      Update
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {contests.map((contest) => (
-                    <UserOrderDataRow key={contest._id} contest={contest} />
+                    <PlantDataRow key={contest._id} contest={contest} />
                   ))}
                 </tbody>
               </table>
@@ -93,4 +84,4 @@ const MyParticipateContest = () => {
   );
 };
 
-export default MyParticipateContest;
+export default MyCreatedContests;
