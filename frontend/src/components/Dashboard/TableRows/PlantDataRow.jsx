@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import DeleteModal from '../../Modal/DeleteModal'
 import UpdatePlantModal from '../../Modal/UpdatePlantModal'
+import { Link } from 'react-router'
 
 const PlantDataRow = ({contest}) => {
   let [isOpen, setIsOpen] = useState(false)
@@ -12,7 +13,7 @@ console.log(contest)
   function closeModal() {
     setIsOpen(false)
   }
-  const {image,name,status,category} = contest
+  const {image,name,status,category,_id} = contest
 
   return (
     <tr>
@@ -38,9 +39,9 @@ console.log(contest)
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
         <p className='text-gray-900 '>{status}</p>
       </td>
-      {/* <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>5</p>
-      </td> */}
+      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
+        <p className='text-gray-900 '> <Link to={`/dashboard/submissions/${contest._id}`}>check</Link> </p>
+      </td>
 
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
         <span

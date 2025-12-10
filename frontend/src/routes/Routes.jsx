@@ -16,6 +16,7 @@ import MyParticipateContest from "../pages/Dashboard/user/MyParticipateContest";
 import { createBrowserRouter } from "react-router";
 import AllContests from "../pages/AllContests/AllContests";
 import PaymentSuccess from "../pages/Payment/PaymentSuccess";
+import Submissions from "../pages/Dashboard/Creator/Submissions";
 
 export const router = createBrowserRouter([
   {
@@ -72,6 +73,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <MyCreatedContests />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "submissions/:id",
+        element: (
+          <PrivateRoute>
+            <Submissions />
           </PrivateRoute>
         ),
       },
