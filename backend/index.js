@@ -232,10 +232,22 @@ async function run() {
       res.send({ submissionResult, contestResult });
     });
 
-    app.get('/my-participate',verifyJWT, async (req,res) => {
+
+    // get all participate contest for a user
+
+    app.get('/my-participate', async (req,res) => {
       const result = await registerCollection.find({customer:req.tokenEmail}).toArray()
       res.send(result)
     })
+
+    // get all contests for a creator made
+    app.get('/my-created-contests/:email', verifyJWT, async (req,res) => {
+      const email = req.params.email
+      const result = await contestsCollection.find({'creator.email':email}).toArray()
+      res.send(result)
+    })
+
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
