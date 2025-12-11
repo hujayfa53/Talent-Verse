@@ -17,6 +17,11 @@ const UserMenu = () => {
         label="My Participated Contest"
         address="My-participate"
       />
+      <MenuItem
+        icon={BsFingerprint}
+        label="My Winning Contest"
+        address="my-winning-contest"
+      />
 
       <div
         onClick={() => setIsOpen(true)}

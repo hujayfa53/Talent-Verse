@@ -18,6 +18,7 @@ import AllContests from "../pages/AllContests/AllContests";
 import PaymentSuccess from "../pages/Payment/PaymentSuccess";
 import Submissions from "../pages/Dashboard/Creator/Submissions";
 import SubmissionDetails from "../pages/Dashboard/Creator/SubmissionDetails";
+import MyWinningContest from "../pages/Dashboard/user/MyWinningContest";
 
 export const router = createBrowserRouter([
   {
@@ -114,6 +115,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <MyParticipateContest />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "my-winning-contest",
+        element: (
+          <PrivateRoute>
+            <MyWinningContest />
           </PrivateRoute>
         ),
       },
