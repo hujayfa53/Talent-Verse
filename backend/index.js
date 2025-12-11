@@ -344,6 +344,14 @@ async function run() {
       res.send(result)
     })
 
+
+    // get all users for admin
+    app.get('/users', verifyJWT, async (req,res) => {
+      const adminEmail = req.tokenEmail
+      const result = await usersCollection.find({email:{$ne:adminEmail}}).toArray()
+      res.send(result)
+    })
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
