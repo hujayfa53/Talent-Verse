@@ -58,6 +58,7 @@ async function run() {
     const registerCollection = db.collection("register");
     const submissionCollection = db.collection("submissions");
     const usersCollection = db.collection("users");
+    const creatorRequestsCollection = db.collection("creator-requests");
 
     // save contests in db
     app.post("/contests", async (req, res) => {
@@ -308,10 +309,39 @@ async function run() {
     })
 
 
+
     // get a user role
     app.get('/user/role',verifyJWT, async (req,res) => {
       const result = await usersCollection.findOne({email:req.tokenEmail})
       res.send({role:result?.role})
+    })
+
+
+    
+    // save become -creator request
+    app.post('/become-creator', verifyJWT,async (req,res) => {
+      const email = req.tokenEmail
+      const alreadyExists = await creatorRequestsCollection.findOne({email})
+      if(alreadyExists)
+        return res.status(409).send({message:'Already Requested Send,Wait For Admin Approved'})
+      const result = await creatorRequestsCollection.insertOne({email})
+      res.send(result)
+    })
+
+
+    // get all creator request for admin
+    app.get('/creator-requests', verifyJWT,async (req,res) => {
+      const result = await creatorRequestsCollection.find().toArray()
+      res.send(result)
+    })
+
+
+    // update a user role
+    app.patch('/update-role', verifyJWT,async (req,res) => {
+      const {email,role} = req.body
+      const result = await usersCollection.updateOne({email}, {$set:{role}})
+      await creatorRequestsCollection.deleteOne({email})
+      res.send(result)
     })
 
     // Send a ping to confirm a successful connection
