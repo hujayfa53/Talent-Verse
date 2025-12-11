@@ -19,6 +19,7 @@ import PaymentSuccess from "../pages/Payment/PaymentSuccess";
 import Submissions from "../pages/Dashboard/Creator/Submissions";
 import SubmissionDetails from "../pages/Dashboard/Creator/SubmissionDetails";
 import MyWinningContest from "../pages/Dashboard/user/MyWinningContest";
+import CreatorRequest from "../pages/Dashboard/Admin/CreatorRequest";
 
 export const router = createBrowserRouter([
   {
@@ -91,6 +92,22 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <SubmissionDetails />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "manage-users",
+        element: (
+          <PrivateRoute>
+            <ManageUsers />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "creator-request",
+        element: (
+          <PrivateRoute>
+            <CreatorRequest />
           </PrivateRoute>
         ),
       },
