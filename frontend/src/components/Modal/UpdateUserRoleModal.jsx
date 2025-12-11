@@ -33,7 +33,7 @@ const UpdateUserRoleModal = ({ isOpen, closeModal, role }) => {
                     name="role"
                     id=""
                   >
-                    <option value="customer">Customer</option>
+                    <option value="customer">participant</option>
                     <option value="Creator">Creator</option>
                     <option value="admin">Admin</option>
                   </select>
