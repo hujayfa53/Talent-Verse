@@ -57,6 +57,7 @@ async function run() {
     const contestsCollection = db.collection("contests");
     const registerCollection = db.collection("register");
     const submissionCollection = db.collection("submissions");
+    const usersCollection = db.collection("users");
 
     // save contests in db
     app.post("/contests", async (req, res) => {
@@ -279,6 +280,38 @@ async function run() {
       const query = {_id: new ObjectId(id)}
       const result = await contestsCollection.deleteOne(query)
       res.send(result)
+    })
+
+
+    // save or update user in db
+    app.post('/user', async (req,res) => {
+      const userData = req.body
+      userData.created_at = new Date().toISOString()
+      userData.last_loggedIn = new Date().toISOString()
+      userData.role = 'participant'
+
+      const query = {
+        email:userData.email,
+      }
+
+      const alreadyExists = await usersCollection.findOne(query)
+
+      if (alreadyExists) {
+        const result = await usersCollection.updateOne(query,{
+          $set:{last_loggedIn: new Date().toISOString()}
+        })
+        return res.send(result)
+      }
+
+      const result = await usersCollection.insertOne(userData)
+      res.send(result)
+    })
+
+
+    // get a user role
+    app.get('/user/role',verifyJWT, async (req,res) => {
+      const result = await usersCollection.findOne({email:req.tokenEmail})
+      res.send({role:result?.role})
     })
 
     // Send a ping to confirm a successful connection
