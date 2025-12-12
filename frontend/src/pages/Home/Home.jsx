@@ -1,5 +1,6 @@
 import Plants from '../../components/Home/Plants'
 import Banner from './banner/Banner'
+import PopularContest from './PopularContests/PopularContest'
 
 const Home = () => {
   return (
@@ -7,6 +8,7 @@ const Home = () => {
       {/* <Plants /> */}
       {/* More components */}
       <Banner />
+      <PopularContest />
     </div>
   )
 }

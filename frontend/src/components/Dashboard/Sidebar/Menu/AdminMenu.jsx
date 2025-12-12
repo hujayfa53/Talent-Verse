@@ -14,7 +14,7 @@ const AdminMenu = () => {
       />
       <MenuItem
         icon={MdOutlineManageHistory}
-        label="Manage Contests"
+        label="Creator Requests"
         address="creator-request"
       />
     </>
