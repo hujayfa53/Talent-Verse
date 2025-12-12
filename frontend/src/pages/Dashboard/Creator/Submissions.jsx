@@ -24,8 +24,14 @@ const Submissions = () => {
     },
   });
 
+  //  1. Check if a winner already exists in the loaded data
+  const isWinnerDeclared = submissions.some(sub => sub.status === 'winner');
+
   // handle declare
   const handleDeclareWinner = async (submission) => {
+    // Optional: Double check safety
+    if(isWinnerDeclared) return toast.error("Winner already declared!");
+
     try {
       await axios.patch(`${import.meta.env.VITE_API_URL}/contests/winner`, {
         submissionId: submission._id,
@@ -42,6 +48,7 @@ const Submissions = () => {
   };
 
   if (isLoading) return <LoadingSpinner />;
+
   return (
     <div>
       <Heading
@@ -61,48 +68,55 @@ const Submissions = () => {
             </tr>
           </thead>
           <tbody>
-          {submissions.map((sub) => (
-  <tr key={sub._id} className={sub.status === 'winner' ? 'bg-green-100' : ''}>
-    <td>
-      <div className="flex items-center gap-3">
-        <div className="avatar">
-          <div className="mask mask-squircle w-12 h-12">
-            <img src={sub.participantImage} alt="Avatar" />
-          </div>
-        </div>
-        <div>
-          <div className="font-bold">{sub.participantName}</div>
-        </div>
-      </div>
-    </td>
-    <td>{sub.participantEmail}</td>
+            {submissions.map((sub) => (
+              <tr
+                key={sub._id}
+                className={sub.status === "winner" ? "bg-green-100" : ""}
+              >
+                <td>
+                  <div className="flex items-center gap-3">
+                    <div className="avatar">
+                      <div className="mask mask-squircle w-12 h-12">
+                        <img src={sub.participantImage} alt="Avatar" />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="font-bold">{sub.participantName}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>{sub.participantEmail}</td>
 
-    {/* REPLACE THE OLD TASK COLUMN WITH THIS  */}
-    <td>
-       <Link
-          to={`/dashboard/single-submissions/${sub._id}`}
-          className="text-blue-500 hover:underline font-medium transition-colors"
-       >
-          View Submission
-       </Link>
-    </td>
-    {/* END OF CHANGE */}
+                {/* Task Link Column */}
+                <td>
+                  <Link
+                    to={`/dashboard/single-submissions/${sub._id}`}
+                    className="text-blue-500 hover:underline font-medium transition-colors"
+                  >
+                    View Submission
+                  </Link>
+                </td>
 
-    <td className="font-bold uppercase">{sub.status}</td>
-    <td>
-      {sub.status === 'winner' ? (
-        <span className="text-green-600 font-bold">WINNER 🏆</span>
-      ) : (
-        <button 
-          onClick={() => handleDeclareWinner(sub)}
-          className="btn btn-xs btn-primary"
-        >
-          Declare Win
-        </button>
-      )}
-    </td>
-  </tr>
-))}
+                <td className="font-bold uppercase">{sub.status}</td>
+                <td>
+                  {sub.status === "winner" ? (
+                    <span className="text-green-600 font-bold">WINNER 🏆</span>
+                  ) : (
+                    //  2. Updated Button Logic
+                    <button
+                      onClick={() => handleDeclareWinner(sub)}
+                      disabled={isWinnerDeclared} // Disable if ANY winner exists
+                      className={`btn btn-xs btn-primary ${
+                        isWinnerDeclared ? "cursor-not-allowed opacity-50" : ""
+                      }`}
+                      title={isWinnerDeclared ? "Winner already declared" : "Declare Winner"}
+                    >
+                      Declare Win
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
         {submissions.length === 0 && (

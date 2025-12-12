@@ -29,7 +29,7 @@ const PopularContest = () => {
             <PopularContestsCard key={contest._id} contest={contest} />
           ))}
         </div>
-        <div className="text-center mt-5">
+        <div className="text-center my-5">
           <Link
             to="/all-contests"
             className=" text-2xl btn btn-primary rounded-2xl"

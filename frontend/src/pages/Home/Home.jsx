@@ -1,6 +1,7 @@
 import Plants from '../../components/Home/Plants'
 import Banner from './banner/Banner'
 import PopularContest from './PopularContests/PopularContest'
+import WinnerSection from './WinnerSection'
 
 const Home = () => {
   return (
@@ -9,6 +10,7 @@ const Home = () => {
       {/* More components */}
       <Banner />
       <PopularContest />
+      <WinnerSection />
     </div>
   )
 }
