@@ -60,8 +60,30 @@ async function run() {
     const usersCollection = db.collection("users");
     const creatorRequestsCollection = db.collection("creator-requests");
 
+    // role middlewares
+    const verifyAdmin = async (req, res, next) => {
+      const email = req.tokenEmail;
+      const user = await usersCollection.findOne({ email });
+      if (user?.role !== "admin")
+        return res
+          .status(403)
+          .send({ message: "Admin Only Actions!", role: user?.role });
+      next();
+    };
+
+    // creator
+    const verifyCreator = async (req, res, next) => {
+      const email = req.tokenEmail;
+      const user = await usersCollection.findOne({ email });
+      if (user?.role !== "creator")
+        return res
+          .status(403)
+          .send({ message: "Creator only Actions!", role: user?.role });
+      next();
+    };
+
     // save contests in db
-    app.post("/contests", async (req, res) => {
+    app.post("/contests", verifyJWT, verifyCreator, async (req, res) => {
       const contestData = req.body;
       const result = await contestsCollection.insertOne(contestData);
       res.send(result);
@@ -74,13 +96,23 @@ async function run() {
       res.send(result);
     });
 
-    // ---get single contest fro
+    // ---get single contest from db
 
     app.get("/contests/:id", async (req, res) => {
       const id = req.params.id;
       const result = await contestsCollection.findOne({
         _id: new ObjectId(id),
       });
+      res.send(result);
+    });
+
+    // popular contests
+    app.get("/popular-contests", async (req, res) => {
+      const result = await contestsCollection
+        .find()
+        .sort({ participate: -1 })
+        .limit(6)
+        .toArray();
       res.send(result);
     });
 
@@ -126,7 +158,7 @@ async function run() {
       const register = await registerCollection.findOne({
         transactionId: session.payment_intent,
       });
-      console.log(register)
+      console.log(register);
 
       if (session.status === "complete" && contest && !register) {
         // save data in db
@@ -155,12 +187,12 @@ async function run() {
           registerId: result.insertedId,
         });
       }
-       res.send(
+      res.send(
         res.send({
           transactionId: session.payment_intent,
           registerId: register._id,
         })
-      )
+      );
     });
 
     // --purchase check
@@ -252,7 +284,7 @@ async function run() {
 
     // get all participate contest for a user
 
-    app.get("/my-participate",verifyJWT, async (req, res) => {
+    app.get("/my-participate", verifyJWT, async (req, res) => {
       const result = await registerCollection
         .find({ customer: req.tokenEmail })
         .toArray();
@@ -268,89 +300,86 @@ async function run() {
       res.send(result);
     });
 
-
     // get all contest for admin
-    app.get('/manage-contests', async (req,res) => {
-      const result = await contestsCollection.find().toArray()
-      res.send(result)
-    })
+    app.get("/manage-contests", async (req, res) => {
+      const result = await contestsCollection.find().toArray();
+      res.send(result);
+    });
 
-
-    app.delete('/contests/:id', async (req,res) => {
-      const id = req.params.id
-      const query = {_id: new ObjectId(id)}
-      const result = await contestsCollection.deleteOne(query)
-      res.send(result)
-    })
-
+    app.delete("/contests/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await contestsCollection.deleteOne(query);
+      res.send(result);
+    });
 
     // save or update user in db
-    app.post('/user', async (req,res) => {
-      const userData = req.body
-      userData.created_at = new Date().toISOString()
-      userData.last_loggedIn = new Date().toISOString()
-      userData.role = 'participant'
+    app.post("/user", async (req, res) => {
+      const userData = req.body;
+      userData.created_at = new Date().toISOString();
+      userData.last_loggedIn = new Date().toISOString();
+      userData.role = "participant";
 
       const query = {
-        email:userData.email,
-      }
+        email: userData.email,
+      };
 
-      const alreadyExists = await usersCollection.findOne(query)
+      const alreadyExists = await usersCollection.findOne(query);
 
       if (alreadyExists) {
-        const result = await usersCollection.updateOne(query,{
-          $set:{last_loggedIn: new Date().toISOString()}
-        })
-        return res.send(result)
+        const result = await usersCollection.updateOne(query, {
+          $set: { last_loggedIn: new Date().toISOString() },
+        });
+        return res.send(result);
       }
 
-      const result = await usersCollection.insertOne(userData)
-      res.send(result)
-    })
-
-
+      const result = await usersCollection.insertOne(userData);
+      res.send(result);
+    });
 
     // get a user role
-    app.get('/user/role',verifyJWT, async (req,res) => {
-      const result = await usersCollection.findOne({email:req.tokenEmail})
-      res.send({role:result?.role})
-    })
+    app.get("/user/role", verifyJWT, async (req, res) => {
+      const result = await usersCollection.findOne({ email: req.tokenEmail });
+      res.send({ role: result?.role });
+    });
 
-
-    
     // save become -creator request
-    app.post('/become-creator', verifyJWT,async (req,res) => {
-      const email = req.tokenEmail
-      const alreadyExists = await creatorRequestsCollection.findOne({email})
-      if(alreadyExists)
-        return res.status(409).send({message:'Already Requested Send,Wait For Admin Approved'})
-      const result = await creatorRequestsCollection.insertOne({email})
-      res.send(result)
-    })
-
+    app.post("/become-creator", verifyJWT, async (req, res) => {
+      const email = req.tokenEmail;
+      const alreadyExists = await creatorRequestsCollection.findOne({ email });
+      if (alreadyExists)
+        return res
+          .status(409)
+          .send({ message: "Already Requested Send,Wait For Admin Approved" });
+      const result = await creatorRequestsCollection.insertOne({ email });
+      res.send(result);
+    });
 
     // get all creator request for admin
-    app.get('/creator-requests', verifyJWT,async (req,res) => {
-      const result = await creatorRequestsCollection.find().toArray()
-      res.send(result)
-    })
-
+    app.get("/creator-requests", verifyJWT, verifyAdmin, async (req, res) => {
+      const result = await creatorRequestsCollection.find().toArray();
+      res.send(result);
+    });
 
     // update a user role
-    app.patch('/update-role', verifyJWT,async (req,res) => {
-      const {email,role} = req.body
-      const result = await usersCollection.updateOne({email}, {$set:{role}})
-      await creatorRequestsCollection.deleteOne({email})
-      res.send(result)
-    })
-
+    app.patch("/update-role", verifyJWT, verifyAdmin, async (req, res) => {
+      const { email, role } = req.body;
+      const result = await usersCollection.updateOne(
+        { email },
+        { $set: { role } }
+      );
+      await creatorRequestsCollection.deleteOne({ email });
+      res.send(result);
+    });
 
     // get all users for admin
-    app.get('/users', verifyJWT, async (req,res) => {
-      const adminEmail = req.tokenEmail
-      const result = await usersCollection.find({email:{$ne:adminEmail}}).toArray()
-      res.send(result)
-    })
+    app.get("/users", verifyJWT, verifyAdmin, async (req, res) => {
+      const adminEmail = req.tokenEmail;
+      const result = await usersCollection
+        .find({ email: { $ne: adminEmail } })
+        .toArray();
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
