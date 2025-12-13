@@ -3,6 +3,8 @@ import { GrUserAdmin } from "react-icons/gr";
 import MenuItem from "./MenuItem";
 import { useState } from "react";
 import BecomeCreatorModal from "../../../Modal/BecomeCreatorModal";
+import { FaTrophy } from "react-icons/fa";
+
 const UserMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -18,7 +20,7 @@ const UserMenu = () => {
         address="My-participate"
       />
       <MenuItem
-        icon={BsFingerprint}
+        icon={FaTrophy}
         label="My Winning Contest"
         address="my-winning-contest"
       />

@@ -20,6 +20,8 @@ import Submissions from "../pages/Dashboard/Creator/Submissions";
 import SubmissionDetails from "../pages/Dashboard/Creator/SubmissionDetails";
 import MyWinningContest from "../pages/Dashboard/user/MyWinningContest";
 import CreatorRequest from "../pages/Dashboard/Admin/CreatorRequest";
+import CreatorRoute from "./CreatorRoute";
+import AdminRoute from "./AdminRoute";
 
 export const router = createBrowserRouter([
   {
@@ -37,11 +39,19 @@ export const router = createBrowserRouter([
       },
       {
         path: "/plant/:id",
-        element: <PlantDetails />,
+        element: (
+          <PrivateRoute>
+            <PlantDetails />,
+          </PrivateRoute>
+        ),
       },
       {
         path: "/payment-success",
-        element: <PaymentSuccess />,
+        element: (
+          <PrivateRoute>
+            <PaymentSuccess />
+          </PrivateRoute>
+        ),
       },
     ],
   },
@@ -67,7 +77,9 @@ export const router = createBrowserRouter([
         path: "add-contests",
         element: (
           <PrivateRoute>
-            <AddContest />
+            <CreatorRoute>
+              <AddContest />
+            </CreatorRoute>
           </PrivateRoute>
         ),
       },
@@ -75,7 +87,9 @@ export const router = createBrowserRouter([
         path: "my-created-contests",
         element: (
           <PrivateRoute>
-            <MyCreatedContests />
+            <CreatorRoute>
+              <MyCreatedContests />
+            </CreatorRoute>
           </PrivateRoute>
         ),
       },
@@ -99,7 +113,9 @@ export const router = createBrowserRouter([
         path: "manage-users",
         element: (
           <PrivateRoute>
-            <ManageUsers />
+            <AdminRoute>
+              <ManageUsers />
+            </AdminRoute>
           </PrivateRoute>
         ),
       },
@@ -107,18 +123,20 @@ export const router = createBrowserRouter([
         path: "creator-request",
         element: (
           <PrivateRoute>
-            <CreatorRequest />
+            <AdminRoute>
+              <CreatorRequest />
+            </AdminRoute>
           </PrivateRoute>
         ),
       },
-      {
-        path: "manage-users",
-        element: (
-          <PrivateRoute>
-            <ManageUsers />
-          </PrivateRoute>
-        ),
-      },
+      // {
+      //   path: "manage-users",
+      //   element: (
+      //     <PrivateRoute>
+      //       <ManageUsers />
+      //     </PrivateRoute>
+      //   ),
+      // },
       {
         path: "profile",
         element: (
@@ -145,7 +163,13 @@ export const router = createBrowserRouter([
       },
       {
         path: "manage-contests",
-        element: <ManageContests />,
+        element: (
+          <PrivateRoute>
+            <AdminRoute>
+              <ManageContests />
+            </AdminRoute>
+          </PrivateRoute>
+        ),
       },
     ],
   },

@@ -12,7 +12,7 @@ const AdminContestsRow = ({contest,refetch}) => {
     try {
       await axios.delete(`${import.meta.env.VITE_API_URL}/contests/${_id}`);
       toast.success("Contest Deleted Successfully");
-      refetch(); // Reload the table
+      refetch(); 
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to delete");
     }
