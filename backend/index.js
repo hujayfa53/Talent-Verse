@@ -381,6 +381,15 @@ async function run() {
       res.send(result);
     });
 
+
+    // get user winning contest
+    app.get('/my-winning-contests/:email',verifyJWT , async (req,res) =>{
+      const email = req.params.email
+      const query = {winnerEmail:email}
+      const result = await contestsCollection.find(query).toArray()
+      res.send(result)
+    })
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
