@@ -1,16 +1,14 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-@plugin "daisyui/theme" {
-  name: "light";
-  default: true;
-
-  /* Brand Colors */
+/* 1. Define your Custom Theme Colors */
+@theme {
   --color-primary: #2B2D6B;   /* Deep Indigo */
-  --color-accent:  #FF5E6C;   /* Electric Coral */
+  --color-accent: #FF5E6C;    /* Electric Coral */
   --color-secondary: #2FD6C7; /* Aqua Mint */
-
-  /* Neutrals */
-  --color-neutral: #16161A;        /* Charcoal (dark) */
-  --color-base-100: #F4F6F8;       /* Smoke (light) */
+  
+  --color-neutral: #16161A;
+  --color-base-100: #F4F6F8;
 }
+
+@custom-variant dark (&:where(.dark, .dark *));
