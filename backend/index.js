@@ -381,14 +381,55 @@ async function run() {
       res.send(result);
     });
 
-
     // get user winning contest
-    app.get('/my-winning-contests/:email',verifyJWT , async (req,res) =>{
-      const email = req.params.email
-      const query = {winnerEmail:email}
-      const result = await contestsCollection.find(query).toArray()
-      res.send(result)
-    })
+    app.get("/my-winning-contests/:email", verifyJWT, async (req, res) => {
+      const email = req.params.email;
+      const query = { winnerEmail: email };
+      const result = await contestsCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    // get user stats
+    app.get("/user-stats/:email", async (req, res) => {
+      const email = req.params.email;
+
+      const winCount = await contestsCollection.countDocuments({
+        winnerEmail: email,
+      });
+
+      const participationCount = await registerCollection.countDocuments({
+        customer: email,
+      });
+
+      const winPercentage =
+        participationCount > 0
+          ? ((winCount / participationCount) * 100).toFixed(1)
+          : 0;
+
+      res.send({ winCount, participationCount, winPercentage });
+    });
+
+
+    // update user profile
+    app.put('/users/:email', async (req, res) => {
+      const email = req.params.email;
+      const updatedData = req.body;
+      
+      const filter = { email: email };
+      const options = { upsert: true }; 
+
+      const updateDoc = {
+        $set: {
+          name: updatedData.name,
+          image: updatedData.image,
+          address: updatedData.address, 
+          role: 'user' 
+        }
+      };
+      
+      const result = await usersCollection.updateOne(filter, updateDoc, options);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
