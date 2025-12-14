@@ -8,8 +8,8 @@ import toast from "react-hot-toast";
 
 const Submissions = () => {
   const { id } = useParams();
+  
 
-  // fetch all submission for this contest
   const {
     data: submissions = [],
     isLoading,
@@ -24,12 +24,10 @@ const Submissions = () => {
     },
   });
 
-  //  1. Check if a winner already exists in the loaded data
+  //   Check if a winner already exists in the loaded data
   const isWinnerDeclared = submissions.some(sub => sub.status === 'winner');
 
-  // handle declare
   const handleDeclareWinner = async (submission) => {
-    // Optional: Double check safety
     if(isWinnerDeclared) return toast.error("Winner already declared!");
 
     try {
@@ -102,7 +100,6 @@ const Submissions = () => {
                   {sub.status === "winner" ? (
                     <span className="text-green-600 font-bold">WINNER 🏆</span>
                   ) : (
-                    //  2. Updated Button Logic
                     <button
                       onClick={() => handleDeclareWinner(sub)}
                       disabled={isWinnerDeclared} // Disable if ANY winner exists

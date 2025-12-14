@@ -22,6 +22,8 @@ import MyWinningContest from "../pages/Dashboard/user/MyWinningContest";
 import CreatorRequest from "../pages/Dashboard/Admin/CreatorRequest";
 import CreatorRoute from "./CreatorRoute";
 import AdminRoute from "./AdminRoute";
+import HowItWorks from "../pages/Home/HowItWorks";
+import FAQSection from "../pages/Home/FAQSection";
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +38,14 @@ export const router = createBrowserRouter([
       {
         path: "/all-contests",
         element: <AllContests />,
+      },
+      {
+        path: "how-it-works",
+        element: <HowItWorks />,
+      },
+      {
+        path: "faq",
+        element: <FAQSection />,
       },
       {
         path: "/plant/:id",
@@ -129,14 +139,7 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
-      // {
-      //   path: "manage-users",
-      //   element: (
-      //     <PrivateRoute>
-      //       <ManageUsers />
-      //     </PrivateRoute>
-      //   ),
-      // },
+      
       {
         path: "profile",
         element: (

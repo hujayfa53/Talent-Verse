@@ -1,37 +1,35 @@
 import { useState } from 'react'
 import UpdateUserRoleModal from '../../Modal/UpdateUserRoleModal'
 
-const UserDataRow = ({refetch,user}) => {
+const UserDataRow = ({ refetch, user }) => {
   let [isOpen, setIsOpen] = useState(false)
   const closeModal = () => setIsOpen(false)
   return (
     <tr>
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>{user?.email}</p>
+      <td className='px-3 py-3 sm:px-5 sm:py-5 border-b border-gray-200 bg-white text-sm'>
+        <p className='text-gray-900 whitespace-nowrap'>{user?.email}</p>
       </td>
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>{user?.role}</p>
+      <td className='px-3 py-3 sm:px-5 sm:py-5 border-b border-gray-200 bg-white text-sm'>
+        <p className='text-gray-900 whitespace-nowrap'>{user?.role}</p>
       </td>
-      {/* <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className=''>Unavailable</p>
-      </td> */}
 
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
+      <td className='px-3 py-3 sm:px-5 sm:py-5 border-b border-gray-200 bg-white text-sm'>
         <span
           onClick={() => setIsOpen(true)}
-          className='relative cursor-pointer inline-block px-3 py-1 font-semibold text-green-900 leading-tight'
+          className='relative cursor-pointer inline-block px-3 py-1 font-semibold text-green-900 leading-tight transition-transform active:scale-95'
         >
           <span
             aria-hidden='true'
             className='absolute inset-0 bg-green-200 opacity-50 rounded-full'
           ></span>
-          <span className='relative'>Update Role</span>
+          <span className='relative whitespace-nowrap'>Update Role</span>
         </span>
-        {/* Modal */}
         <UpdateUserRoleModal
           isOpen={isOpen}
           closeModal={closeModal}
-          role='customer'
+          role={user?.role}
+          user={user}
+          refetch={refetch}
         />
       </td>
     </tr>

@@ -2,17 +2,18 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { Link, useSearchParams } from "react-router";
 import { IoBagCheckOutline } from 'react-icons/io5'
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
-
+  const axiosSecure = useAxiosSecure()
 
 //   one time fetch
 
   useEffect(() => {
     if (sessionId) {
-      axios.post(`${import.meta.env.VITE_API_URL}/payment-success`, {
+      axiosSecure.post(`/payment-success`, {
         sessionId,
       });
     }

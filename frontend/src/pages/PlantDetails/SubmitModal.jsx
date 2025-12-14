@@ -3,33 +3,35 @@ import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import useAuth from '../../hooks/useAuth';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import useAxiosSecure from '../../hooks/useAxiosSecure'
 
 const SubmitModal = ({ closeModal, isSubmitOpen, contest }) => {
   const { user } = useAuth();
   const [submission, setSubmission] = useState('');
+  const axiosSecure = useAxiosSecure()
 
   const handleSubmit = async () => {
-    // 1. Validation
+    //  Validation
     if (!submission.trim()) return toast.error("Please write something or paste a link.");
 
     const submissionData = {
       contestId: contest?._id,
-      contestName: contest?.name, // Optional: helpful for display later
+      contestName: contest?.name, 
       participantEmail: user?.email,
       participantName: user?.displayName,
       participantImage: user?.photoURL,
       taskSubmission: submission,
-      status: 'pending', // Default status
+      status: 'pending', 
       submittedAt: new Date(),
     };
 
     try {
-      // 2. Send to Backend
-      await axios.post(`${import.meta.env.VITE_API_URL}/submissions`, submissionData);
+      //  Send to Backend
+      await axiosSecure.post(`/submissions`, submissionData);
       
       toast.success("Task Submitted Successfully!");
-      setSubmission(''); // Clear input
-      closeModal();      // Close modal
+      setSubmission('');
+      closeModal();      
     } catch (err) {
       console.error(err);
       toast.error(err.response?.data?.message || "Submission failed. You may have already submitted.");

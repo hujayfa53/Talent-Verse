@@ -4,10 +4,11 @@ import { Fragment } from 'react';
 import useAuth from '../../hooks/useAuth';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-
+import useAxiosSecure from '../../hooks/useAxiosSecure'
 const UpdateProfileModal = ({ isOpen, closeModal, refetch }) => {
   const { user, updateUserProfile } = useAuth();
   const [loading, setLoading] = useState(false);
+  const axiosSecure = useAxiosSecure();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,15 +17,12 @@ const UpdateProfileModal = ({ isOpen, closeModal, refetch }) => {
     const form = e.target;
     const name = form.name.value;
     const photoURL = form.photoURL.value;
-    const address = form.address.value; // The new field
+    const address = form.address.value; 
 
     try {
-      // 1. Update Firebase Profile (Name & Photo)
       await updateUserProfile(name, photoURL);
 
-      // 2. Update MongoDB Database (Address & synced info)
-      // Note: We use PUT to create or update the user record
-      await axios.put(`${import.meta.env.VITE_API_URL}/users/${user?.email}`, {
+      await axiosSecure.put(`/users/${user?.email}`, {
         name,
         image: photoURL,
         address
@@ -32,8 +30,6 @@ const UpdateProfileModal = ({ isOpen, closeModal, refetch }) => {
 
       toast.success("Profile Updated Successfully!");
       
-      // 3. Refresh the data in the parent component (Profile.jsx)
-      // This is crucial for showing the new address immediately
       if (refetch) refetch();
       
       closeModal();

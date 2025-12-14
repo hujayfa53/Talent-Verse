@@ -7,28 +7,28 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
 import UpdateProfileModal from '../../../components/Modal/UpdateProfileModal';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
 
 const Profile = () => {
   const { user, loading: authLoading } = useAuth();
   const [role, isRoleLoading] = useRole();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const axiosSecure = useAxiosSecure()
 
-  // 1. Fetch User Stats for Chart
   const { data: stats = {}, isLoading: statsLoading, refetch } = useQuery({
     queryKey: ['user-stats', user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/user-stats/${user?.email}`);
+      const res = await axiosSecure.get(`/user-stats/${user?.email}`);
       return res.data;
     },
   });
   
-  // 2. Fetch User Details (Address) from DB
   const { data: dbUser = {},refetch:refetchUser } = useQuery({
     queryKey: ['dbUser', user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/users/${user?.email}`);
+        const res = await axiosSecure.get(`/users/${user?.email}`);
         return res.data;
     }
   });
@@ -41,7 +41,7 @@ const Profile = () => {
     { name: 'Participation', value: (stats.participationCount || 0) - (stats.winCount || 0) }, // Remaining participation
   ];
   
-  const COLORS = ['#FF5E6C', '#2B2D6B']; // Your Brand Colors (Coral & Indigo)
+  const COLORS = ['#FF5E6C', '#2B2D6B']; 
 
   return (
     <div className='flex justify-center items-center py-12 bg-gray-50 min-h-screen'>
@@ -168,8 +168,7 @@ const Profile = () => {
         isOpen={isModalOpen} 
         closeModal={() => setIsModalOpen(false)} 
         refetch={() => {
-            refetch(); // Reload stats
-            // You might need a way to refetch dbUser here too if strict, but usually handled by query cache invalidation or page reload
+            refetch(); 
         }}
       />
     </div>

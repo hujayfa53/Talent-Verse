@@ -2,7 +2,7 @@ import React from 'react';
 import { FaFacebook, FaLinkedin, FaTwitter } from 'react-icons/fa';
 import Container from '../../../components/Shared/Container'; 
 import { Link } from 'react-router';
-import logo from '../../../assets/images/logo.png'
+import smallLogo from '../../../assets/images/smallLogo.png'
 
 const Footer = () => {
   return (
@@ -14,9 +14,9 @@ const Footer = () => {
           <div className="flex items-center gap-3">
             {/* Placeholder Logo - Replace src with your actual logo file */}
             <img 
-              src={logo}
+              src={smallLogo}
               alt="Talent Verse Logo" 
-              className="w-10 h-10 object-contain brightness-0 invert" 
+              className="w-10 h-10 object-contain  invert" 
             />
             <span className="text-2xl font-bold tracking-wide">
               Talent Verse
@@ -25,7 +25,7 @@ const Footer = () => {
 
           {/* 2. Copyright Text */}
           <div className="text-gray-400 text-sm">
-            Copyright © 2025 ContestHub. All rights reserved.
+            Copyright © 2025 Talent Verse. All rights reserved.
           </div>
 
           {/* 3. Social Links */}

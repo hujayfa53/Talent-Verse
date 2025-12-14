@@ -11,7 +11,7 @@ const MyWinningContests = () => {
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
 
-  // 1. Fetch Winning Data
+  //  Fetch Winning Data
   const { data: winnings = [], isLoading } = useQuery({
     queryKey: ['my-winning-contests', user?.email],
     enabled: !!user?.email,
@@ -21,7 +21,7 @@ const MyWinningContests = () => {
     },
   });
 
-  // 2. Calculate Total Prize Money
+  //  Calculate Total Prize Money
   const totalPrize = winnings.reduce((sum, item) => sum + Number(item.prize), 0);
 
   if (isLoading) return <LoadingSpinner />;
@@ -30,7 +30,7 @@ const MyWinningContests = () => {
     <div className="p-6 bg-gray-50 min-h-screen">
       <Heading title="My Trophy Room" subtitle="Celebrating your hard-earned victories!" />
 
-      {/* --- STATS CARD --- */}
+      {/*  STATS CARD */}
       {winnings.length > 0 && (
         <div className="bg-[#2B2D6B] rounded-2xl p-8 mb-10 text-center shadow-2xl relative overflow-hidden max-w-2xl mx-auto">
            {/* Background Decoration */}

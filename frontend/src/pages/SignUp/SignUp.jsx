@@ -23,14 +23,8 @@ const SignUp = () => {
   const onSubmit = async (data) => {
     const { name, image, email, password } = data;
     const imageFile = image[0];
-    // console.log(data)
     try {
-      // const { data } = await axios.post(
-      //   `https://api.imgbb.com/1/upload?key=${
-      //     import.meta.env.VITE_IMGBB_API_KEY
-      //   }`,
-      //   formData
-      // )
+    
       const imageURL = await imageUpload(imageFile);
 
       //1. User Registration
@@ -53,10 +47,8 @@ const SignUp = () => {
     }
   };
 
-  // Handle Google Signin
   const handleGoogleSignIn = async () => {
     try {
-      //User Registration using google
       const { user } = await signInWithGoogle();
       
       await saveOrUpdateUser({

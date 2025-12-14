@@ -2,9 +2,10 @@ import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 import { data } from "react-router";
-
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const PurchaseModal = ({ closeModal, isOpen, contest }) => {
+  const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
   // Total Price Calculation
   const { _id, name, category, fee, description, image, creator } =
@@ -26,8 +27,8 @@ const PurchaseModal = ({ closeModal, isOpen, contest }) => {
         image: user?.photoURL,
       },
     };
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_API_URL}/create-checkout-session`,
+    const { data } = await axiosSecure.post(
+      `/create-checkout-session`,
       paymentInfo
     );
     window.location.href = data.url;

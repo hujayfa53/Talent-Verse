@@ -15,72 +15,78 @@ const MyCreatedContests = () => {
       return result.data;
     },
   });
+
   if (isLoading) return <LoadingSpinner />;
+
   return (
-    <>
-      <div className="container mx-auto px-4 sm:px-8">
-        <div className="py-8">
-          <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-            <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
+    <div className="container mx-auto px-4 sm:px-8 py-8">
+      <div className="flex flex-col">
+        <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+            <div className="overflow-hidden shadow-md rounded-lg border border-gray-200">
               <table className="min-w-full leading-normal">
-                <thead>
+                <thead className="bg-gray-50">
                   <tr>
                     <th
                       scope="col"
-                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
+                      className="px-5 py-3 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
                     >
                       Image
                     </th>
                     <th
                       scope="col"
-                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
+                      className="px-5 py-3 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
                     >
                       Name
                     </th>
                     <th
                       scope="col"
-                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
+                      className="px-5 py-3 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
                     >
                       Category
                     </th>
                     <th
                       scope="col"
-                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
+                      className="px-5 py-3 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
                     >
                       Status
                     </th>
                     <th
                       scope="col"
-                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
+                      className="px-5 py-3 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
                     >
-                       Submissions
+                      Submissions
                     </th>
-
                     <th
                       scope="col"
-                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
+                      className="px-5 py-3 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
                     >
                       Delete
                     </th>
                     <th
                       scope="col"
-                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
+                      className="px-5 py-3 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
                     >
                       Update
                     </th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="bg-white divide-y divide-gray-200">
                   {contests.map((contest) => (
                     <PlantDataRow key={contest._id} contest={contest} />
                   ))}
                 </tbody>
               </table>
+              {contests.length === 0 && (
+                <div className="p-6 text-center text-gray-500 bg-white">
+                  No contests found.
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,6 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import CreatorOrderDataRow from "../../../components/Dashboard/TableRows/CreatorOrderDataRow";
-import axios from "axios";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
 import AdminContestsRow from "../../../components/Dashboard/TableRows/AdminContestsRow";
@@ -31,44 +29,37 @@ const ManageContests = () => {
                   <tr>
                     <th
                       scope="col"
-                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
+                      className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal whitespace-nowrap"
                     >
                       Name
                     </th>
                     <th
                       scope="col"
-                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
+                      className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal whitespace-nowrap"
                     >
                       User
                     </th>
                     <th
                       scope="col"
-                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
+                      className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal whitespace-nowrap"
                     >
                       Fee
                     </th>
                     <th
                       scope="col"
-                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
+                      className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal whitespace-nowrap"
                     >
                       Prize
                     </th>
                     <th
                       scope="col"
-                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
+                      className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal whitespace-nowrap"
                     >
                       Deadline
                     </th>
-                    {/* <th
-                      scope="col"
-                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
-                    >
-                      Status
-                    </th> */}
-
                     <th
                       scope="col"
-                      className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
+                      className="px-5 py-3 bg-white border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-normal whitespace-nowrap"
                     >
                       Action
                     </th>
@@ -76,7 +67,11 @@ const ManageContests = () => {
                 </thead>
                 <tbody>
                   {contests.map((contest) => (
-                    <AdminContestsRow key={contest._id} contest={contest} refetch={refetch}/>
+                    <AdminContestsRow
+                      key={contest._id}
+                      contest={contest}
+                      refetch={refetch}
+                    />
                   ))}
                 </tbody>
               </table>
